@@ -40,10 +40,100 @@ def style_background_home():
 def style_background_dashboard():
     st.markdown("""
         <style>
+            /* soft lavender -> pink background that slowly drifts */
             .stApp {
-                background: #663399 !important;
+                background: linear-gradient(135deg, #E0E3FF 0%, #ECE4FF 45%, #FBE3F1 100%) !important;
+                background-size: 200% 200% !important;
+                animation: snapDrift 18s ease-in-out infinite;
             }
-            
+            @keyframes snapDrift {
+                0%   { background-position: 0% 50%; }
+                50%  { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+
+            /* narrow, centered content column */
+            .block-container {
+                max-width: 640px !important;
+            }
+
+            /* dark titles + labels on the light background */
+            .stApp h1, .stApp h2, .stApp h3 {
+                color: #14102E !important;
+            }
+            .stApp h2 {
+                position: relative !important;
+                display: inline-block !important;
+                padding-bottom: 0.4rem !important;
+            }
+            .stApp h2::after {
+                content: "" !important;
+                position: absolute !important;
+                left: 0 !important;
+                bottom: 0 !important;
+                width: 3rem !important;
+                height: 4px !important;
+                border-radius: 4px !important;
+                background: linear-gradient(90deg, #5865F2 0%, #EB459E 100%) !important;
+            }
+            .stApp h2.snap-logo-text {
+                padding-bottom: 0 !important;
+            }
+            .stApp h2.snap-logo-text::after {
+                content: none !important;
+            }
+            .st-key-dash_title h2 {
+                font-size: 1.6rem !important;
+                line-height: 1.15 !important;
+                margin: 1rem 0 1.5rem 0 !important;
+            }
+            .stApp [data-testid="stWidgetLabel"] p {
+                color: #262151 !important;
+                font-weight: 600 !important;
+            }
+
+            /* text inputs */
+            .stApp [data-testid="stTextInputRootElement"] {
+                background: #F1F2FF !important;
+                border: 1.5px solid transparent !important;
+                border-radius: 0.9rem !important;
+                transition: all 0.2s ease-in-out !important;
+            }
+            .stApp [data-testid="stTextInputRootElement"]:hover {
+                border-color: #B9BEFA !important;
+            }
+            .stApp [data-testid="stTextInputRootElement"]:focus-within {
+                border-color: #5865F2 !important;
+                box-shadow: 0 0 0 4px rgba(88, 101, 242, 0.18) !important;
+                transform: translateY(-1px);
+            }
+            .stApp [data-testid="stTextInput"] input {
+                color: #262151 !important;
+                background: transparent !important;
+            }
+
+            /* password strength meter */
+            .pw-meter {
+                display: flex;
+                gap: 6px;
+                align-items: center;
+                margin: -0.25rem 0 0.5rem 0;
+                font-family: 'Outfit', sans-serif;
+                font-size: 0.85rem;
+                color: #262151;
+            }
+            .pw-meter .seg {
+                flex: 1;
+                height: 6px;
+                border-radius: 4px;
+                background: #D3D6F5;
+                transition: background 0.25s ease-in-out;
+            }
+            .pw-meter .label {
+                min-width: 4.5rem;
+                text-align: right;
+                font-weight: 600;
+            }
         </style>
     """, unsafe_allow_html=True)
 
