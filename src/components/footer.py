@@ -13,7 +13,7 @@ def footer_home():
 def footer_dashboard():
     st.markdown("""
         <div style="margin-top:2rem; display:flex; justify-content:center; items-align:center">
-        <p style="font-weight:bold; color:black;">Made by Arpan Ghosh</p>
+        <p style="font-weight:bold; color:#C9CCFF;">Made by Arpan Ghosh</p>
         </div>
 
                 """, unsafe_allow_html=True)

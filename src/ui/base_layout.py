@@ -1,72 +1,89 @@
 import streamlit as st
+from src.ui.assets import image_data_uri
+
+
+def _neon_background_css():
+    bg_uri = image_data_uri("background.jpg")
+    return f"""
+        .stApp {{
+            background: linear-gradient(180deg, rgba(8,8,32,0.55) 0%, rgba(8,8,32,0.75) 100%), url('{bg_uri}') !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-attachment: fixed !important;
+        }}
+    """
 
 
 def style_background_home():
-    st.markdown("""
+    st.markdown(f"""
         <style>
-            .stApp {
-                background: linear-gradient(135deg, #5865F2 0%, #7C6FF2 45%, #9B6BF6 100%) !important;
-                background-attachment: fixed !important;
-            }
-            .stApp div[data-testid="stColumn"] {
-                background-color: #E0E3FF !important;
+            {_neon_background_css()}
+
+            .stApp div[data-testid="stColumn"] {{
+                background: linear-gradient(160deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%) !important;
+                backdrop-filter: blur(20px) !important;
+                -webkit-backdrop-filter: blur(20px) !important;
+                border: 1px solid rgba(255,255,255,0.18) !important;
                 padding: 2.5rem !important;
-                border-radius: 2.5rem !important;
-                box-shadow: 0 12px 30px rgba(30, 20, 90, 0.35) !important;
+                border-radius: 2rem !important;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.35) !important;
                 text-align: center !important;
-                transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out !important;
-            }
-            .stApp div[data-testid="stColumn"]:hover {
-                transform: translateY(-8px) !important;
-                box-shadow: 0 18px 40px rgba(30, 20, 90, 0.45) !important;
-            }
-            .stApp div[data-testid="stColumn"] div[data-testid="stVerticalBlock"] {
+                transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out, border-color 0.25s ease-in-out !important;
+            }}
+            .stApp div[data-testid="stColumn"]:hover {{
+                transform: translateY(-10px) !important;
+                border-color: rgba(139, 92, 246, 0.55) !important;
+                box-shadow: 0 20px 50px rgba(0,0,0,0.45), 0 0 45px rgba(139, 92, 246, 0.3) !important;
+            }}
+            .stApp div[data-testid="stColumn"] div[data-testid="stVerticalBlock"] {{
                 display: flex !important;
                 flex-direction: column !important;
                 align-items: center !important;
-            }
-            .stApp div[data-testid="stColumn"] h2 {
-                color: #262151 !important;
+            }}
+            .stApp div[data-testid="stColumn"] h2 {{
+                color: #F5F5FF !important;
                 white-space: nowrap !important;
-            }
-            .stApp div[data-testid="stColumn"] img {
+            }}
+            .stApp div[data-testid="stColumn"] img {{
                 display: block !important;
                 margin: 0.5rem auto !important;
-            }
+            }}
+            .portal-subtext {{
+                color: #C9CCFF !important;
+                font-size: 0.95rem !important;
+                margin: 0.4rem 0 1.5rem 0 !important;
+            }}
+
+            .st-key-student_portal_btn button {{
+                background: linear-gradient(90deg, #5865F2 0%, #9B6BF6 100%) !important;
+            }}
+            .st-key-teacher_portal_btn button {{
+                background: linear-gradient(90deg, #FF7A59 0%, #EB459E 100%) !important;
+            }}
         </style>
     """, unsafe_allow_html=True)
 
 
 def style_background_dashboard():
-    st.markdown("""
+    st.markdown(f"""
         <style>
-            /* soft lavender -> pink background that slowly drifts */
-            .stApp {
-                background: linear-gradient(135deg, #E0E3FF 0%, #ECE4FF 45%, #FBE3F1 100%) !important;
-                background-size: 200% 200% !important;
-                animation: snapDrift 18s ease-in-out infinite;
-            }
-            @keyframes snapDrift {
-                0%   { background-position: 0% 50%; }
-                50%  { background-position: 100% 50%; }
-                100% { background-position: 0% 50%; }
-            }
+            {_neon_background_css()}
 
             /* narrow, centered content column */
-            .block-container {
+            .block-container {{
                 max-width: 640px !important;
-            }
+            }}
 
-            /* dark titles + labels on the light background */
-            .stApp h1, .stApp h2, .stApp h3 {
-                color: #14102E !important;
-            }
-            .stApp h2 {
+            /* light titles + labels on the dark neon background */
+            .stApp h1, .stApp h2, .stApp h3 {{
+                color: #F5F5FF !important;
+            }}
+            .stApp h2 {{
                 position: relative !important;
                 display: inline-block !important;
                 padding-bottom: 0.4rem !important;
-            }
-            .stApp h2::after {
+            }}
+            .stApp h2::after {{
                 content: "" !important;
                 position: absolute !important;
                 left: 0 !important;
@@ -74,66 +91,55 @@ def style_background_dashboard():
                 width: 3rem !important;
                 height: 4px !important;
                 border-radius: 4px !important;
-                background: linear-gradient(90deg, #5865F2 0%, #EB459E 100%) !important;
-            }
-            .stApp h2.snap-logo-text {
-                padding-bottom: 0 !important;
-            }
-            .stApp h2.snap-logo-text::after {
-                content: none !important;
-            }
-            .st-key-dash_title h2 {
-                font-size: 1.6rem !important;
-                line-height: 1.15 !important;
-                margin: 1rem 0 1.5rem 0 !important;
-            }
-            .stApp [data-testid="stWidgetLabel"] p {
-                color: #262151 !important;
+                background: linear-gradient(90deg, #8B5CF6 0%, #EB459E 100%) !important;
+            }}
+            .stApp [data-testid="stWidgetLabel"] p {{
+                color: #C9CCFF !important;
                 font-weight: 600 !important;
-            }
+            }}
 
             /* text inputs */
-            .stApp [data-testid="stTextInputRootElement"] {
-                background: #F1F2FF !important;
-                border: 1.5px solid transparent !important;
+            .stApp [data-testid="stTextInputRootElement"] {{
+                background: rgba(255, 255, 255, 0.06) !important;
+                border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
                 border-radius: 0.9rem !important;
                 transition: all 0.2s ease-in-out !important;
-            }
-            .stApp [data-testid="stTextInputRootElement"]:hover {
-                border-color: #B9BEFA !important;
-            }
-            .stApp [data-testid="stTextInputRootElement"]:focus-within {
-                border-color: #5865F2 !important;
-                box-shadow: 0 0 0 4px rgba(88, 101, 242, 0.18) !important;
+            }}
+            .stApp [data-testid="stTextInputRootElement"]:hover {{
+                border-color: rgba(139, 92, 246, 0.5) !important;
+            }}
+            .stApp [data-testid="stTextInputRootElement"]:focus-within {{
+                border-color: #8B5CF6 !important;
+                box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.25) !important;
                 transform: translateY(-1px);
-            }
-            .stApp [data-testid="stTextInput"] input {
-                color: #262151 !important;
+            }}
+            .stApp [data-testid="stTextInput"] input {{
+                color: #F5F5FF !important;
                 background: transparent !important;
-            }
+            }}
 
             /* password strength meter */
-            .pw-meter {
+            .pw-meter {{
                 display: flex;
                 gap: 6px;
                 align-items: center;
                 margin: -0.25rem 0 0.5rem 0;
                 font-family: 'Outfit', sans-serif;
                 font-size: 0.85rem;
-                color: #262151;
-            }
-            .pw-meter .seg {
+                color: #C9CCFF;
+            }}
+            .pw-meter .seg {{
                 flex: 1;
                 height: 6px;
                 border-radius: 4px;
-                background: #D3D6F5;
+                background: rgba(255, 255, 255, 0.12);
                 transition: background 0.25s ease-in-out;
-            }
-            .pw-meter .label {
+            }}
+            .pw-meter .label {{
                 min-width: 4.5rem;
                 text-align: right;
                 font-weight: 600;
-            }
+            }}
         </style>
     """, unsafe_allow_html=True)
 
@@ -159,7 +165,7 @@ def style_base_layout():
             font-size: 3.5rem !important;
             line-height: 1.1 !important;
             margin-bottom: 0rem !important;
-            color: #E0E3FF;
+            color: #F5F5FF;
         }
 
         h2 {
@@ -167,7 +173,7 @@ def style_base_layout():
             font-size: 1.5rem !important;
             line-height: 0.9 !important;
             margin-bottom: 0rem !important;
-            color: #E0E3FF;
+            color: #F5F5FF;
         }
 
         h3, h4, p {
@@ -176,32 +182,33 @@ def style_base_layout():
 
         button {
             border-radius: 1.5rem !important;
-            background: #5865F2 !important;
+            background: linear-gradient(90deg, #5865F2 0%, #9B6BF6 100%) !important;
             color: white !important;
             padding: 10px 20px !important;
             border: none !important;
-            transition: transform 0.25s ease-in-out !important;
+            transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out !important;
         }
 
         button[kind='secondary'] {
             border-radius: 1.5rem !important;
-            background: #EB459E !important;
+            background: linear-gradient(90deg, #EB459E 0%, #FF7A59 100%) !important;
             color: white !important;
             padding: 10px 20px !important;
             border: none !important;
-            transition: transform 0.25s ease-in-out !important;
+            transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out !important;
         }
 
         button[kind='tertiary'] {
             border-radius: 1.5rem !important;
-            background: black !important;
-            color: white !important;
+            background: rgba(255, 255, 255, 0.06) !important;
+            border: 1.5px solid rgba(255, 90, 120, 0.4) !important;
+            color: #FF8FA3 !important;
             padding: 10px 20px !important;
-            border: none !important;
-            transition: transform 0.25s ease-in-out !important;
+            transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out !important;
         }
         button:hover{
-            transform: scale(1.05)
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.35) !important;
         }
 
         </style>
