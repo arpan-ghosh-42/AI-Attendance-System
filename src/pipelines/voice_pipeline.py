@@ -1,17 +1,19 @@
-from resemblyzer import VoiceEncoder, preprocess_wav
 import numpy as np 
 import io
-import librosa
 import streamlit as st
 
 
 @st.cache_resource
 def load_voice_encoder():
+    # imported lazily: torch/resemblyzer are too heavy to load on every page view
+    from resemblyzer import VoiceEncoder
     return VoiceEncoder()
 
 
 def get_voice_embedding(audio_bytes):
     try:
+        import librosa
+        from resemblyzer import preprocess_wav
         encoder = load_voice_encoder()
 
         audio, sr = librosa.load(io.BytesIO(audio_bytes), sr=16000)
@@ -47,6 +49,8 @@ def identify_speaker(new_embedding, candidates_dict, threshold=0.65):
 def process_bulk_audio(audio_bytes, candidates_dict, threshold=0.65):
 
     try:
+        import librosa
+        from resemblyzer import preprocess_wav
         encoder = load_voice_encoder()
 
         audio, sr = librosa.load(io.BytesIO(audio_bytes), sr=16000)

@@ -3,7 +3,6 @@
 import dlib
 import numpy as np
 import face_recognition_models
-from sklearn.svm import SVC
 import streamlit as st
 
 from src.database.db import get_all_students
@@ -57,6 +56,7 @@ def get_trained_model():
     if len(X) ==0:
         return 0
     
+    from sklearn.svm import SVC
     clf = SVC(kernel='linear', probability=True, class_weight='balanced')
 
     try:
