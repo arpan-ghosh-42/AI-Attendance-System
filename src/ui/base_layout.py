@@ -54,6 +54,18 @@ def style_background_home():
                 margin: 0.4rem 0 1.5rem 0 !important;
             }}
 
+            .snap-chip {{
+                padding: 0.45rem 1rem;
+                border-radius: 999px;
+                background: rgba(255,255,255,0.08);
+                border: 1px solid rgba(255,255,255,0.18);
+                color: #F1F2FF;
+                font-family: 'Outfit', sans-serif;
+                font-size: 0.92rem;
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+            }}
+
             .st-key-student_portal_btn button {{
                 background: linear-gradient(90deg, #5865F2 0%, #9B6BF6 100%) !important;
             }}
@@ -69,9 +81,78 @@ def style_background_dashboard():
         <style>
             {_neon_background_css()}
 
-            /* narrow, centered content column */
+            /* centered content column - wide enough for 3 tabs + tables */
             .block-container {{
-                max-width: 640px !important;
+                max-width: 980px !important;
+            }}
+
+            /* metric cards */
+            .stApp [data-testid="stMetric"] {{
+                background: linear-gradient(160deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%);
+                border: 1px solid rgba(255,255,255,0.16);
+                border-radius: 1.2rem;
+                padding: 1.1rem 1.4rem;
+                backdrop-filter: blur(14px);
+                -webkit-backdrop-filter: blur(14px);
+                box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+            }}
+            .stApp [data-testid="stMetricValue"] {{
+                font-family: 'Climate Crisis', sans-serif !important;
+                background: linear-gradient(90deg, #8B5CF6 0%, #EB459E 100%);
+                -webkit-background-clip: text;
+                background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }}
+            .stApp [data-testid="stMetricLabel"] p {{
+                color: #C9CCFF !important;
+            }}
+
+            /* tables */
+            .stApp [data-testid="stDataFrame"] {{
+                border: 1px solid rgba(255,255,255,0.14);
+                border-radius: 1rem;
+                overflow: hidden;
+                box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+            }}
+
+            /* select boxes */
+            .stApp [data-baseweb="select"] > div {{
+                background: rgba(255, 255, 255, 0.06) !important;
+                border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+                border-radius: 0.9rem !important;
+                transition: all 0.2s ease-in-out !important;
+            }}
+            .stApp [data-baseweb="select"] > div:hover {{
+                border-color: rgba(139, 92, 246, 0.5) !important;
+            }}
+
+            /* alerts */
+            .stApp [data-testid="stAlert"] {{
+                border-radius: 1rem !important;
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(255,255,255,0.12);
+            }}
+
+            /* camera / file inputs */
+            .stApp [data-testid="stFileUploaderDropzone"],
+            .stApp [data-testid="stCameraInput"] {{
+                background: rgba(255,255,255,0.05) !important;
+                border: 1.5px dashed rgba(139, 92, 246, 0.5) !important;
+                border-radius: 1rem !important;
+            }}
+
+            /* dialogs */
+            div[role="dialog"] {{
+                background: linear-gradient(160deg, rgba(30,24,86,0.97) 0%, rgba(14,12,52,0.98) 100%) !important;
+                border: 1px solid rgba(139, 92, 246, 0.35) !important;
+                border-radius: 1.5rem !important;
+                box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 60px rgba(139,92,246,0.18) !important;
+            }}
+
+            /* dividers */
+            .stApp hr {{
+                border-color: rgba(255,255,255,0.12) !important;
             }}
 
             /* light titles + labels on the dark neon background */
@@ -207,8 +288,62 @@ def style_base_layout():
             transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out !important;
         }
         button:hover{
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.35) !important;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4) !important;
+        }
+        button:active{
+            transform: translateY(0) scale(0.98);
+        }
+        button:disabled{
+            opacity: 0.4 !important;
+            filter: grayscale(0.4);
+        }
+        button:disabled:hover{
+            transform: none;
+            box-shadow: none !important;
+        }
+        button p {
+            font-weight: 600 !important;
+            font-family: 'Outfit', sans-serif !important;
+        }
+
+        /* page fade-in */
+        @keyframes snap-fade-up {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .block-container {
+            animation: snap-fade-up 0.5s ease-out both;
+        }
+
+        /* gradient text helper + pill badge */
+        .snap-gradient-text {
+            background: linear-gradient(90deg, #8B5CF6 0%, #EB459E 55%, #FF7A59 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .snap-badge {
+            display: inline-block;
+            padding: 0.3rem 0.9rem;
+            border-radius: 999px;
+            background: rgba(139, 92, 246, 0.18);
+            border: 1px solid rgba(139, 92, 246, 0.45);
+            color: #D9CCFF;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+        }
+
+        /* scrollbar + selection */
+        ::selection { background: rgba(139, 92, 246, 0.55); color: white; }
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.45); border-radius: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); }
+
+        @media (max-width: 640px) {
+            h1 { font-size: 2.2rem !important; }
         }
 
         </style>

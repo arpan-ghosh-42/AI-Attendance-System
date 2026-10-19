@@ -11,10 +11,19 @@ def home_screen():
     style_base_layout()
 
     st.markdown("""
-        <p style="text-align:center; color:#C9CCFF; font-size:1.1rem; max-width:620px; margin:0 auto 2.5rem auto;">
-            An AI-powered attendance system using face and voice recognition
-            for smarter, faster and easier classrooms.
+        <div style="text-align:center; margin-bottom:0.8rem;">
+            <span class="snap-badge">✨ AI-POWERED ATTENDANCE</span>
+        </div>
+        <p style="text-align:center; color:#E4E6FF; font-size:1.25rem; max-width:640px; margin:0 auto 1.2rem auto; line-height:1.5;">
+            Take attendance in <span class="snap-gradient-text" style="font-weight:700;">seconds</span>
+            using face and voice recognition for smarter, faster and easier classrooms.
         </p>
+        <div style="display:flex; justify-content:center; gap:0.7rem; flex-wrap:wrap; margin:0 auto 2.5rem auto;">
+            <span class="snap-chip">📸 Face recognition</span>
+            <span class="snap-chip">🎙️ Voice recognition</span>
+            <span class="snap-chip">📊 Instant reports</span>
+            <span class="snap-chip">🔗 Join with a code</span>
+        </div>
     """, unsafe_allow_html=True)
 
     col1, col2 = st.columns(2, gap="large")
