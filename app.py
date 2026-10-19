@@ -1,11 +1,14 @@
 import streamlit as st
-from src.screens.home_screen import home_screen 
-from src.screens.teacher_screen import teacher_screen
-from src.screens.student_screen import student_screen
+from PIL import Image
+
+st.set_page_config(
+    page_title="Attendly - AI Attendance System",
+    page_icon=Image.open("assets/images/logo.webp"),
+    layout="centered",
+)
 
 
 def main():
-    
 
     if 'login_type' not in st.session_state:
         st.session_state['login_type'] = None
@@ -13,14 +16,19 @@ def main():
     if st.query_params.get('join-code'):
         st.session_state['login_type'] = 'student'
 
+    # screens are imported on demand: the teacher/student screens pull in
+    # supabase, pandas and dlib, which is slow on a small free-tier instance
     match st.session_state['login_type']:
         case 'teacher':
+            from src.screens.teacher_screen import teacher_screen
             teacher_screen()
 
         case 'student':
+            from src.screens.student_screen import student_screen
             student_screen()
 
         case None:
+            from src.screens.home_screen import home_screen
             home_screen()
 
 main()
