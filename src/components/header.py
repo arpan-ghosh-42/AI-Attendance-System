@@ -7,7 +7,7 @@ def header_home():
 
     st.markdown(f"""
         <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; margin-bottom:10px; margin-top:20px">
-            <img src='{logo_uri}' style='height:220px; filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.45));' />
+            <img src='{logo_uri}' style='height:clamp(120px, 32vw, 220px); width:auto; max-width:80vw; filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.45));' />
         </div>
                 """, unsafe_allow_html=True)
 
@@ -17,6 +17,6 @@ def header_dashboard():
 
     st.markdown(f"""
         <div style="display:flex; align-items:center; justify-content:center;">
-            <img src='{logo_uri}' style='height:90px;' />
+            <img src='{logo_uri}' style='height:clamp(60px, 14vw, 90px); width:auto; max-width:60vw;' />
         </div>
                 """, unsafe_allow_html=True)

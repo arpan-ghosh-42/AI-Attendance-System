@@ -34,14 +34,26 @@ def get_teacher_subjects(teacher_id):
     response = supabase.table("subjects").select("*").eq("teacher_id", teacher_id).execute()
     subjects = response.data
 
+    if not subjects:
+        return subjects
+
+    # two batched queries instead of two queries per subject
+    subject_ids = [s["subject_id"] for s in subjects]
+
+    students_res = supabase.table("subject_students").select("subject_id").in_("subject_id", subject_ids).execute()
+    student_counts = {}
+    for row in students_res.data:
+        student_counts[row["subject_id"]] = student_counts.get(row["subject_id"], 0) + 1
+
+    classes_res = supabase.table("attendance_logs").select("subject_id, timestamp").in_("subject_id", subject_ids).execute()
+    class_times = {}
+    for row in classes_res.data:
+        class_times.setdefault(row["subject_id"], set()).add(row["timestamp"])
+
     for subject in subjects:
         sid = subject["subject_id"]
-
-        students_res = supabase.table("subject_students").select("student_id", count="exact").eq("subject_id", sid).execute()
-        subject["total_students"] = students_res.count or 0
-
-        classes_res = supabase.table("attendance_logs").select("timestamp").eq("subject_id", sid).execute()
-        subject["total_classes"] = len({row["timestamp"] for row in classes_res.data})
+        subject["total_students"] = student_counts.get(sid, 0)
+        subject["total_classes"] = len(class_times.get(sid, ()))
 
     return subjects
 

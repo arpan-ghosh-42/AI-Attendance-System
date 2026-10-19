@@ -21,9 +21,7 @@ def subject_card(name, code, section, stats=None, footer_callback=None):
     st.markdown("""
         <style>
             .snap-subject-card {
-                background: linear-gradient(160deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%);
-                backdrop-filter: blur(16px);
-                -webkit-backdrop-filter: blur(16px);
+                background: linear-gradient(160deg, rgba(40,34,110,0.78) 0%, rgba(20,17,70,0.82) 100%);
                 border-left: 6px solid #EB459E;
                 padding: 25px;
                 border-radius: 20px;
@@ -32,12 +30,16 @@ def subject_card(name, code, section, stats=None, footer_callback=None):
                 border-bottom: 1px solid rgba(255, 255, 255, 0.16);
                 margin-bottom: 20px;
                 box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-                transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+                transition: transform 0.2s ease-out;
             }
-            .snap-subject-card:hover {
-                transform: translateY(-6px);
-                border-left-color: #8B5CF6;
-                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(139, 92, 246, 0.35);
+            @media (hover: hover) {
+                .snap-subject-card:hover {
+                    transform: translateY(-6px);
+                    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(139, 92, 246, 0.35);
+                }
+            }
+            @media (max-width: 640px) {
+                .snap-subject-card { padding: 18px; }
             }
             .stApp .snap-subject-card h3.snap-subject-title {
                 margin: 0 !important;

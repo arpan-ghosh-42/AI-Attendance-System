@@ -4,12 +4,21 @@ from src.ui.assets import image_data_uri
 
 def _neon_background_css():
     bg_uri = image_data_uri("background.jpg")
+    # painted on a fixed pseudo-element (GPU layer) instead of
+    # background-attachment: fixed, which repaints on every scroll frame
     return f"""
         .stApp {{
-            background: linear-gradient(180deg, rgba(8,8,32,0.55) 0%, rgba(8,8,32,0.75) 100%), url('{bg_uri}') !important;
-            background-size: cover !important;
-            background-position: center !important;
-            background-attachment: fixed !important;
+            background: #0B0B2E !important;
+            isolation: isolate;
+        }}
+        .stApp::before {{
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background: linear-gradient(180deg, rgba(8,8,32,0.55) 0%, rgba(8,8,32,0.75) 100%), url('{bg_uri}') center / cover no-repeat;
+            transform: translateZ(0);
         }}
     """
 
@@ -20,20 +29,20 @@ def style_background_home():
             {_neon_background_css()}
 
             .stApp div[data-testid="stColumn"] {{
-                background: linear-gradient(160deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%) !important;
-                backdrop-filter: blur(20px) !important;
-                -webkit-backdrop-filter: blur(20px) !important;
+                background: linear-gradient(160deg, rgba(40,34,110,0.78) 0%, rgba(20,17,70,0.82) 100%) !important;
                 border: 1px solid rgba(255,255,255,0.18) !important;
                 padding: 2.5rem !important;
                 border-radius: 2rem !important;
                 box-shadow: 0 8px 32px rgba(0,0,0,0.35) !important;
                 text-align: center !important;
-                transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out, border-color 0.25s ease-in-out !important;
+                transition: transform 0.2s ease-out, border-color 0.2s ease-out !important;
             }}
-            .stApp div[data-testid="stColumn"]:hover {{
-                transform: translateY(-10px) !important;
-                border-color: rgba(139, 92, 246, 0.55) !important;
-                box-shadow: 0 20px 50px rgba(0,0,0,0.45), 0 0 45px rgba(139, 92, 246, 0.3) !important;
+            @media (hover: hover) {{
+                .stApp div[data-testid="stColumn"]:hover {{
+                    transform: translateY(-8px) !important;
+                    border-color: rgba(139, 92, 246, 0.55) !important;
+                    box-shadow: 0 20px 50px rgba(0,0,0,0.45), 0 0 45px rgba(139, 92, 246, 0.3) !important;
+                }}
             }}
             .stApp div[data-testid="stColumn"] div[data-testid="stVerticalBlock"] {{
                 display: flex !important;
@@ -54,6 +63,16 @@ def style_background_home():
                 margin: 0.4rem 0 1.5rem 0 !important;
             }}
 
+            @media (max-width: 640px) {{
+                .stApp div[data-testid="stColumn"] {{
+                    padding: 1.4rem !important;
+                    border-radius: 1.4rem !important;
+                }}
+                .stApp div[data-testid="stColumn"] h2 {{
+                    white-space: normal !important;
+                }}
+            }}
+
             .snap-chip {{
                 padding: 0.45rem 1rem;
                 border-radius: 999px;
@@ -62,8 +81,6 @@ def style_background_home():
                 color: #F1F2FF;
                 font-family: 'Outfit', sans-serif;
                 font-size: 0.92rem;
-                backdrop-filter: blur(10px);
-                -webkit-backdrop-filter: blur(10px);
             }}
 
             .st-key-student_portal_btn button {{
@@ -88,12 +105,10 @@ def style_background_dashboard():
 
             /* metric cards */
             .stApp [data-testid="stMetric"] {{
-                background: linear-gradient(160deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%);
+                background: linear-gradient(160deg, rgba(40,34,110,0.78) 0%, rgba(20,17,70,0.82) 100%);
                 border: 1px solid rgba(255,255,255,0.16);
                 border-radius: 1.2rem;
                 padding: 1.1rem 1.4rem;
-                backdrop-filter: blur(14px);
-                -webkit-backdrop-filter: blur(14px);
                 box-shadow: 0 6px 24px rgba(0,0,0,0.25);
             }}
             .stApp [data-testid="stMetricValue"] {{
@@ -129,8 +144,6 @@ def style_background_dashboard():
             /* alerts */
             .stApp [data-testid="stAlert"] {{
                 border-radius: 1rem !important;
-                backdrop-filter: blur(10px);
-                -webkit-backdrop-filter: blur(10px);
                 border: 1px solid rgba(255,255,255,0.12);
             }}
 
@@ -267,7 +280,7 @@ def style_base_layout():
             color: white !important;
             padding: 10px 20px !important;
             border: none !important;
-            transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out !important;
+            transition: transform 0.15s ease-out !important;
         }
 
         button[kind='secondary'] {
@@ -276,7 +289,7 @@ def style_base_layout():
             color: white !important;
             padding: 10px 20px !important;
             border: none !important;
-            transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out !important;
+            transition: transform 0.15s ease-out !important;
         }
 
         button[kind='tertiary'] {
@@ -285,11 +298,13 @@ def style_base_layout():
             border: 1.5px solid rgba(255, 90, 120, 0.4) !important;
             color: #FF8FA3 !important;
             padding: 10px 20px !important;
-            transition: transform 0.25s ease-in-out, box-shadow 0.25s ease-in-out !important;
+            transition: transform 0.15s ease-out !important;
         }
-        button:hover{
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4) !important;
+        @media (hover: hover) {
+            button:hover{
+                transform: translateY(-2px);
+                box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4) !important;
+            }
         }
         button:active{
             transform: translateY(0) scale(0.98);
@@ -299,7 +314,7 @@ def style_base_layout():
             filter: grayscale(0.4);
         }
         button:disabled:hover{
-            transform: none;
+            transform: none !important;
             box-shadow: none !important;
         }
         button p {
@@ -308,12 +323,12 @@ def style_base_layout():
         }
 
         /* page fade-in */
-        @keyframes snap-fade-up {
-            from { opacity: 0; transform: translateY(14px); }
-            to   { opacity: 1; transform: translateY(0); }
+        @keyframes snap-fade-in {
+            from { opacity: 0; }
+            to   { opacity: 1; }
         }
         .block-container {
-            animation: snap-fade-up 0.5s ease-out both;
+            animation: snap-fade-in 0.25s ease-out both;
         }
 
         /* gradient text helper + pill badge */
@@ -343,7 +358,22 @@ def style_base_layout():
         ::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); }
 
         @media (max-width: 640px) {
+            .block-container {
+                padding: 1rem 1rem 3rem 1rem !important;
+            }
             h1 { font-size: 2.2rem !important; }
+            h2 { font-size: 1.25rem !important; line-height: 1.2 !important; }
+            button { padding: 10px 14px !important; }
+            [data-testid="stMetricValue"] { font-size: 1.6rem !important; }
+            [data-testid="stDataFrame"] { max-width: 100%; overflow-x: auto; }
+            img { max-width: 100%; height: auto; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation: none !important;
+                transition: none !important;
+            }
         }
 
         </style>
