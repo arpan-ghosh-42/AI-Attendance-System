@@ -1,3 +1,5 @@
+import threading
+
 import streamlit as st
 from PIL import Image
 
@@ -6,6 +8,17 @@ st.set_page_config(
     page_icon=Image.open("assets/images/logo.webp"),
     layout="centered",
 )
+
+
+@st.cache_resource(show_spinner=False)
+def _preload_screens():
+    # once per server process: import the heavy screens in the background
+    # while the visitor is still on the home page, so the first click is instant
+    def _load():
+        import src.screens.teacher_screen  # noqa: F401
+        import src.screens.student_screen  # noqa: F401
+    threading.Thread(target=_load, daemon=True).start()
+    return True
 
 
 def main():
@@ -30,5 +43,6 @@ def main():
         case None:
             from src.screens.home_screen import home_screen
             home_screen()
+            _preload_screens()
 
 main()

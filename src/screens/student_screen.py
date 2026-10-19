@@ -15,6 +15,15 @@ from src.components.dialog_enroll import enroll_dialog
 from src.components.dialog_auto_enroll import auto_enroll_dialog
 from src.components.subject_card import subject_card
 
+# navigation callbacks: run before the rerun, so one click = one script run
+def _go_home():
+    st.session_state['login_type'] = None
+
+def _logout():
+    st.session_state['is_logged_in'] = False
+    st.session_state.pop('student_data', None)
+
+
 def student_dashboard():
     student_data = st.session_state.student_data
     student_id = student_data['student_id']
@@ -27,10 +36,7 @@ def student_dashboard():
         header_dashboard()
     with c2:
         st.subheader(f"""Welcome, {student_data['name']} """)
-        if st.button("Logout", type='secondary', key='loginbackbtn', shortcut="control+backspace"):
-            st.session_state['is_logged_in'] = False
-            del st.session_state.student_data 
-            st.rerun()
+        st.button("Logout", type='secondary', key='loginbackbtn', shortcut="control+backspace", on_click=_logout)
 
 
     st.space()
@@ -109,9 +115,7 @@ def student_screen():
     with c1:
         header_dashboard()
     with c2:
-        if st.button("Home Screen", type='secondary', key='loginbackbtn', shortcut="control+backspace"):
-            st.session_state['login_type'] = None
-            st.rerun()
+        st.button("Home Screen", type='secondary', key='loginbackbtn', shortcut="control+backspace", on_click=_go_home)
 
     st.header('Login using FaceID', text_alignment='center')
     st.space()
@@ -141,7 +145,6 @@ def student_screen():
                         st.session_state.user_role = 'student'
                         st.session_state.student_data = student
                         st.toast(f'Welcome Back {student["name"]}')
-                        time.sleep(1)
                         st.rerun()
                 else:
                     st.info('Face not recognized! You might be a new student!')
@@ -182,7 +185,6 @@ def student_screen():
                                 st.session_state.user_role = 'student'
                                 st.session_state.student_data = response_data[0]
                                 st.toast(f'Profile Created! Hi {new_name}!')
-                                time.sleep(1)
                                 st.rerun()
                         else:
                             st.error('Couldnt capture your facial features for registration')

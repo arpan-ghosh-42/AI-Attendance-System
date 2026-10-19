@@ -22,6 +22,10 @@ _TEACHER_ICON = """
 """
 
 
+def _go(login_type):
+    st.session_state['login_type'] = login_type
+
+
 def home_screen():
 
 
@@ -51,16 +55,14 @@ def home_screen():
         st.markdown(f'<div class="snap-orb cyan">{_STUDENT_ICON}</div>', unsafe_allow_html=True)
         st.header("I'm a Student")
         st.markdown('<p class="portal-subtext">Register with your face, add your voice and track your attendance.</p>', unsafe_allow_html=True)
-        if st.button('Student Portal', type='primary', icon=':material/arrow_outward:', icon_position='right', width='stretch', key='student_portal_btn'):
-            st.session_state['login_type']='student'
-            st.rerun()
+        st.button('Student Portal', type='primary', icon=':material/arrow_outward:', icon_position='right', width='stretch', key='student_portal_btn',
+                  on_click=_go, args=('student',))
 
     with col2:
         st.markdown(f'<div class="snap-orb magenta">{_TEACHER_ICON}</div>', unsafe_allow_html=True)
         st.header("I'm a Teacher")
         st.markdown('<p class="portal-subtext">Manage classes, take attendance, and view detailed reports.</p>', unsafe_allow_html=True)
-        if st.button('Teacher Portal', type='primary', icon=':material/arrow_outward:', icon_position='right', width='stretch', key='teacher_portal_btn'):
-            st.session_state['login_type']='teacher'
-            st.rerun()
+        st.button('Teacher Portal', type='primary', icon=':material/arrow_outward:', icon_position='right', width='stretch', key='teacher_portal_btn',
+                  on_click=_go, args=('teacher',))
 
     footer_home()
