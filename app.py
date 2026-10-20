@@ -19,6 +19,9 @@ def _preload_screens():
         time.sleep(4)  # let the home page paint first on a small CPU
         import src.screens.teacher_screen  # noqa: F401
         import src.screens.student_screen  # noqa: F401
+        # load the face models now, so the first face scan doesn't pay for it
+        from src.pipelines.face_pipeline import load_dlib_models
+        load_dlib_models()
     threading.Thread(target=_load, daemon=True).start()
     return True
 

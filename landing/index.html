@@ -144,13 +144,9 @@ footer{border-top:1px solid rgba(34,211,238,.12);padding:28px 0;text-align:cente
 footer b{color:#E879F9}
 
 /* app shell: the real app preloads here, invisible, at full size */
-#shell{position:fixed;inset:0;z-index:100;background:var(--bg);opacity:0;pointer-events:none;visibility:visible}
-#shell.open{opacity:1;pointer-events:auto}
-#shell iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg)}
-#back{position:absolute;z-index:3;left:12px;bottom:14px;padding:.55rem 1rem;border-radius:999px;background:rgba(9,12,30,.92);border:1px solid rgba(34,211,238,.45);color:#CFF6FF;font:600 .9rem var(--body);cursor:pointer;display:none}
-#shell.open #back{display:block}
-#loader{position:absolute;inset:0;z-index:2;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:20px}
-#shell.open.wait #loader{display:flex}
+#shell{position:fixed;inset:0;z-index:100;background:var(--bg);display:none}
+#shell.open{display:block}
+#loader{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:20px}
 .spin{width:54px;height:54px;border-radius:50%;border:3px solid rgba(34,211,238,.18);border-top-color:var(--cyan);animation:sp 1s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 #loader p{color:var(--muted)}
@@ -184,7 +180,7 @@ footer b{color:#E879F9}
       <div class="cta">
         <button class="btn cy lg" data-launch>Get started for free &rarr;</button>
       </div>
-      <div class="status" id="status"><span class="dot"></span><span id="statusText">Getting the app ready&hellip;</span></div>
+      <div class="status" id="status"><span class="dot"></span><span id="statusText">Connecting to the app&hellip;</span></div>
       <div class="chips">
         <span class="chip">Face ID login</span><span class="chip">Photo attendance</span><span class="chip">Voice attendance</span><span class="chip">Instant reports</span>
       </div>
@@ -301,14 +297,12 @@ footer b{color:#E879F9}
 
 <footer>Made with <b>&hearts;</b> by Arpan Ghosh</footer>
 
-<!-- The real app loads here in the background while the visitor reads the page -->
+<!-- shown briefly while the browser opens the app -->
 <div id="shell" aria-hidden="true">
-  <button id="back" type="button">&larr; Back to home</button>
   <div id="loader">
     <div class="spin"></div>
     <h2 style="margin:0">Starting Attendly&hellip;</h2>
-    <p id="loaderMsg">Warming up the AI engine. This only takes a few seconds.</p>
-    <p id="loaderSlow" style="display:none">Taking longer than usual. <a id="direct" href="#">Open the app directly</a></p>
+    <p>Warming up the AI engine. This only takes a few seconds.</p>
   </div>
 </div>
 
@@ -318,86 +312,46 @@ footer b{color:#E879F9}
 (function(){
   var params = new URLSearchParams(location.search);
   var isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-  var APP = (isLocal && params.get('app')) || 'https://ai-attendance-ufui.onrender.com';
+  var APP = ((isLocal && params.get('app')) || 'https://ai-attendance-ufui.onrender.com').replace(/\/$/, '');
   var join = params.get('join-code');
 
   var shell = document.getElementById('shell');
   var statusEl = document.getElementById('status');
   var statusText = document.getElementById('statusText');
-  var frame = null, ready = false, opened = false, slowTimer = null, launchedAt = 0, revealTimer = null;
 
   function appUrl(){
-    var u = APP.replace(/\/$/,'') + '/?embed=true';
-    if (join) u += '&join-code=' + encodeURIComponent(join);
-    return u;
+    return APP + '/' + (join ? '?join-code=' + encodeURIComponent(join) : '');
   }
 
-  function setReady(){
-    ready = true;
-    statusEl.classList.add('ready');
-    statusText.textContent = 'App is ready. Launch whenever you like.';
-    if (opened) reveal();
-  }
-
-  // show the "Starting Attendly" screen for at least 1s on every launch, then reveal the app
-  function reveal(){
-    clearTimeout(slowTimer);
-    clearTimeout(revealTimer);
-    var left = Math.max(0, 1000 - (Date.now() - launchedAt));
-    revealTimer = setTimeout(function(){ shell.classList.remove('wait'); }, left);
-  }
-
-  function preload(){
-    if (frame) return;
-    frame = document.createElement('iframe');
-    frame.title = 'Attendly app';
-    frame.allow = 'camera; microphone; clipboard-write; fullscreen';
-    frame.src = appUrl();
-    // the iframe "load" event means the app shell arrived; its first script run
-    // takes a few more seconds on a small server, so we wait a little longer
-    frame.addEventListener('load', function(){ setTimeout(setReady, 3500); });
-    shell.insertBefore(frame, shell.firstChild);
-  }
-
+  // The app opens as its own page (not embedded): browsers block the app's
+  // security cookie inside a cross-site frame, which breaks photo uploads.
   function launch(){
-    preload();
-    if (opened) return;
-    opened = true;
     shell.classList.add('open');
-    shell.setAttribute('aria-hidden','false');
-    document.documentElement.style.overflow = 'hidden';
-    launchedAt = Date.now();
-    shell.classList.add('wait');
-    if (ready){
-      reveal();
-    } else {
-      slowTimer = setTimeout(function(){
-        document.getElementById('loaderSlow').style.display = 'block';
-        document.getElementById('direct').href = appUrl().replace('?embed=true','?').replace('&join-code','join-code');
-      }, 25000);
-    }
-    history.pushState({app:1}, '', '#app');
+    shell.setAttribute('aria-hidden', 'false');
+    location.assign(appUrl());
   }
 
-  function close(){
-    if (!opened) return;
-    opened = false;
-    clearTimeout(revealTimer);
-    shell.classList.remove('open','wait');
-    shell.setAttribute('aria-hidden','true');
-    document.documentElement.style.overflow = '';
-  }
+  // coming back with the browser Back button: hide the loader again
+  window.addEventListener('pageshow', function(){
+    shell.classList.remove('open');
+    shell.setAttribute('aria-hidden', 'true');
+  });
 
   document.querySelectorAll('[data-launch]').forEach(function(b){ b.addEventListener('click', launch); });
-  document.getElementById('back').addEventListener('click', function(){ history.back(); });
-  window.addEventListener('popstate', function(){ if (opened) close(); });
 
-  // start loading the app once the page has painted
-  function start(){ setTimeout(preload, 300); }
-  if (document.readyState === 'complete') start(); else window.addEventListener('load', start);
+  // class join links go straight into the app
+  if (join) { location.replace(appUrl()); return; }
 
-  // class join links open straight into the app
-  if (join) launch();
+  // wake the app server and open the connection early, so Launch starts faster
+  var pre = document.createElement('link');
+  pre.rel = 'preconnect'; pre.href = APP;
+  document.head.appendChild(pre);
+  fetch(APP + '/_stcore/health', {mode: 'no-cors', cache: 'no-store'})
+    .then(function(){
+      statusEl.classList.add('ready');
+      statusText.textContent = 'App is online. Launch whenever you like.';
+    })
+    .catch(function(){ statusText.textContent = 'Waking up the app…'; });
 })();
 </script>
 </body>

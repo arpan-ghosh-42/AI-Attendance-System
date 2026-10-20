@@ -48,7 +48,12 @@ def _prepare_image(image_np):
     return np.ascontiguousarray(img)
 
 
-def _detect(detector, img):
+def _detect(detector, img, thorough=True):
+    if not thorough:
+        # selfie / login photo: one large face, normal resolution is enough (much faster)
+        faces = detector(img, 0)
+        return faces if len(faces) else detector(img, 1)
+
     faces = detector(img, 1)
     # small faces in a group photo / low-res webcam frame: look harder
     if len(faces) == 0 or max(img.shape[:2]) < MIN_SIDE_FOR_UPSAMPLE:
@@ -58,10 +63,10 @@ def _detect(detector, img):
     return faces
 
 
-def get_face_embeddings(image_np, num_jitters=1):
+def get_face_embeddings(image_np, num_jitters=1, thorough=True):
     detector, sp, facerec = load_dlib_models()
     img = _prepare_image(image_np)
-    faces = _detect(detector, img)
+    faces = _detect(detector, img, thorough)
 
     encodings = []
     for face in faces:
@@ -74,7 +79,7 @@ def get_face_embeddings(image_np, num_jitters=1):
 def get_enrollment_embedding(image_np):
     """Embedding used when registering a student: averaged over 10 jittered
     crops, which is noticeably more stable than a single pass."""
-    encodings = get_face_embeddings(image_np, num_jitters=10)
+    encodings = get_face_embeddings(image_np, num_jitters=10, thorough=False)
     return encodings
 
 
@@ -135,8 +140,8 @@ def distance_to_student(encoding, student_id):
     return float(np.min(np.linalg.norm(model_data['X'][mask] - encoding, axis=1)))
 
 
-def predict_attendance(class_image_np):
-    encodings = get_face_embeddings(class_image_np)
+def predict_attendance(class_image_np, thorough=True):
+    encodings = get_face_embeddings(class_image_np, thorough=thorough)
 
     detected_student = {}
     model_data = get_trained_model()

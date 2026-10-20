@@ -162,7 +162,7 @@ def student_screen():
         img = np.array(ImageOps.exif_transpose(Image.open(photo_source)).convert('RGB'))
 
         with st.spinner('AI is scanning..'):
-            detected, all_ids, num_faces = predict_attendance(img)
+            detected, all_ids, num_faces = predict_attendance(img, thorough=False)
 
             if num_faces == 0:
                 st.warning('Face not found!')
