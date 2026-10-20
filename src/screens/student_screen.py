@@ -24,10 +24,20 @@ def _logout():
     st.session_state.pop('student_data', None)
 
 
+def _toggle_sample_camera():
+    st.session_state.sample_camera_on = not st.session_state.get('sample_camera_on', False)
+
+
 def improve_face_recognition(student_id):
-    with st.expander("Improve face recognition", icon=":material/face_retouching_natural:"):
+    camera_on = st.session_state.get('sample_camera_on', False)
+    with st.expander("Improve face recognition", icon=":material/face_retouching_natural:", expanded=camera_on):
         st.caption("Add 2-3 more photos (different lighting / angle, face clearly visible). "
                    "More samples make attendance detection much more reliable.")
+        st.button("Close camera" if camera_on else "Add a face photo", key="sample_camera_btn",
+                  type='primary', icon=':material/photo_camera:', on_click=_toggle_sample_camera)
+        if not camera_on:
+            return  # the camera element isn't created, so the browser camera stays off
+
         photo = st.camera_input("Add a face sample", key="extra_face_sample")
         if photo and st.session_state.get("last_face_sample") != photo.file_id:
             st.session_state.last_face_sample = photo.file_id
@@ -43,7 +53,7 @@ def improve_face_recognition(student_id):
                     return
                 count = add_face_sample(student_id, encodings[0].tolist())
                 train_classifier()
-            st.success(f"Saved! You now have {count} face sample(s).")
+            st.success(f"Saved! You now have {count} face sample(s). Take another or close the camera.")
 
 
 def student_dashboard():
