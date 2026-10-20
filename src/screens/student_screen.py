@@ -4,11 +4,11 @@ from src.ui.base_layout import style_background_dashboard, style_base_layout
 
 from src.components.header import header_dashboard
 from src.components.footer import footer_dashboard
-from PIL import Image
+from PIL import Image, ImageOps
 import numpy as np
-from src.pipelines.face_pipeline import predict_attendance, get_face_embeddings, train_classifier
+from src.pipelines.face_pipeline import predict_attendance, get_enrollment_embedding, train_classifier, distance_to_student, SAME_PERSON_FOR_NEW_SAMPLE
 from src.pipelines.voice_pipeline import get_voice_embedding
-from src.database.db import get_all_students, create_student, get_student_subjects, get_student_attendance, unenroll_student_to_subject
+from src.database.db import get_all_students, create_student, get_student_subjects, get_student_attendance, unenroll_student_to_subject, add_face_sample
 import time
 
 from src.components.dialog_enroll import enroll_dialog
@@ -22,6 +22,28 @@ def _go_home():
 def _logout():
     st.session_state['is_logged_in'] = False
     st.session_state.pop('student_data', None)
+
+
+def improve_face_recognition(student_id):
+    with st.expander("Improve face recognition", icon=":material/face_retouching_natural:"):
+        st.caption("Add 2-3 more photos (different lighting / angle, face clearly visible). "
+                   "More samples make attendance detection much more reliable.")
+        photo = st.camera_input("Add a face sample", key="extra_face_sample")
+        if photo and st.session_state.get("last_face_sample") != photo.file_id:
+            st.session_state.last_face_sample = photo.file_id
+            with st.spinner("Checking photo..."):
+                img = np.array(ImageOps.exif_transpose(Image.open(photo)).convert('RGB'))
+                encodings = get_enrollment_embedding(img)
+                if len(encodings) != 1:
+                    st.warning("Make sure exactly one face is clearly visible.")
+                    return
+                dist = distance_to_student(encodings[0], student_id)
+                if dist is not None and dist > SAME_PERSON_FOR_NEW_SAMPLE:
+                    st.error("This doesn't look like the same person as your profile, so it wasn't saved.")
+                    return
+                count = add_face_sample(student_id, encodings[0].tolist())
+                train_classifier()
+            st.success(f"Saved! You now have {count} face sample(s).")
 
 
 def student_dashboard():
@@ -40,6 +62,8 @@ def student_dashboard():
 
 
     st.space()
+
+    improve_face_recognition(student_id)
 
     c1, c2 =st.columns(2)
     with c1:
@@ -125,7 +149,7 @@ def student_screen():
     photo_source = st.camera_input("Position your face in the center")
 
     if photo_source:
-        img = np.array(Image.open(photo_source))
+        img = np.array(ImageOps.exif_transpose(Image.open(photo_source)).convert('RGB'))
 
         with st.spinner('AI is scanning..'):
             detected, all_ids, num_faces = predict_attendance(img)
@@ -168,8 +192,8 @@ def student_screen():
             if st.button('Create Account', type='primary'):
                 if new_name:
                     with st.spinner('Creating profile..'):
-                        img = np.array(Image.open(photo_source))
-                        encodings= get_face_embeddings(img)
+                        img = np.array(ImageOps.exif_transpose(Image.open(photo_source)).convert('RGB'))
+                        encodings= get_enrollment_embedding(img)
                         if encodings:
                             face_emb = encodings[0].tolist()
 

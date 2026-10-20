@@ -119,6 +119,21 @@ def create_student(name, face_embedding=None, voice_embedding=None):
     response = supabase.table("students").insert(data).execute()
     return response.data
 
+def face_samples(face_embedding):
+    """face_embedding is either one 128-d list (older rows) or a list of them."""
+    if not face_embedding:
+        return []
+    if isinstance(face_embedding[0], (int, float)):
+        return [face_embedding]
+    return list(face_embedding)
+
+def add_face_sample(student_id, embedding, max_samples=5):
+    res = supabase.table("students").select("face_embedding").eq("student_id", student_id).execute()
+    samples = face_samples(res.data[0]["face_embedding"]) if res.data else []
+    samples = (samples + [embedding])[-max_samples:]
+    supabase.table("students").update({"face_embedding": samples}).eq("student_id", student_id).execute()
+    return len(samples)
+
 def get_student_subjects(student_id):
     response = supabase.table("subject_students").select("*, subjects(*)").eq("student_id", student_id).execute()
     return response.data
