@@ -6,7 +6,8 @@ import io
 
 @st.dialog("Share Class Link")
 def share_subject_dialog(subject_name, subject_code):
-    app_domain = "snapclass-main.streamlit.app"
+    # the landing page opens the app and passes the join code through
+    app_domain = "https://attendly-2v69.onrender.com"
     join_url = f"{app_domain}/?join-code={subject_code}"
 
     st.header("Scan to Join")
