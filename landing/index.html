@@ -140,8 +140,6 @@ summary::after{content:"+";color:var(--cyan);font-size:1.3rem;line-height:1}
 details[open] summary::after{content:"\2212"}
 details p{color:var(--muted);margin-top:10px}
 
-.final{text-align:center;padding:84px 0}
-.final .box{padding:56px 24px;border-radius:26px;background:linear-gradient(160deg,rgba(17,24,52,.95),rgba(9,12,30,.97));border:1px solid rgba(34,211,238,.28);box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 70px rgba(139,92,246,.1)}
 footer{border-top:1px solid rgba(34,211,238,.12);padding:28px 0;text-align:center;color:var(--muted);font-size:.92rem}
 footer b{color:#E879F9}
 
@@ -301,14 +299,6 @@ footer b{color:#E879F9}
   </div>
 </section>
 
-<div class="final">
-  <div class="wrap"><div class="box">
-    <span class="badge"><i></i>READY WHEN YOU ARE</span>
-    <p class="sub" style="margin:0 auto 26px">Open Attendly and take your first attendance in seconds.</p>
-    <button class="btn cy lg" data-launch>Launch Attendly &rarr;</button>
-  </div></div>
-</div>
-
 <footer>Made with <b>&hearts;</b> by Arpan Ghosh</footer>
 
 <!-- The real app loads here in the background while the visitor reads the page -->
@@ -334,7 +324,7 @@ footer b{color:#E879F9}
   var shell = document.getElementById('shell');
   var statusEl = document.getElementById('status');
   var statusText = document.getElementById('statusText');
-  var frame = null, ready = false, opened = false, slowTimer = null;
+  var frame = null, ready = false, opened = false, slowTimer = null, launchedAt = 0, revealTimer = null;
 
   function appUrl(){
     var u = APP.replace(/\/$/,'') + '/?embed=true';
@@ -346,8 +336,15 @@ footer b{color:#E879F9}
     ready = true;
     statusEl.classList.add('ready');
     statusText.textContent = 'App is ready. Launch whenever you like.';
-    shell.classList.remove('wait');
+    if (opened) reveal();
+  }
+
+  // show the "Starting Attendly" screen for at least 1s on every launch, then reveal the app
+  function reveal(){
     clearTimeout(slowTimer);
+    clearTimeout(revealTimer);
+    var left = Math.max(0, 1000 - (Date.now() - launchedAt));
+    revealTimer = setTimeout(function(){ shell.classList.remove('wait'); }, left);
   }
 
   function preload(){
@@ -369,8 +366,11 @@ footer b{color:#E879F9}
     shell.classList.add('open');
     shell.setAttribute('aria-hidden','false');
     document.documentElement.style.overflow = 'hidden';
-    if (!ready){
-      shell.classList.add('wait');
+    launchedAt = Date.now();
+    shell.classList.add('wait');
+    if (ready){
+      reveal();
+    } else {
       slowTimer = setTimeout(function(){
         document.getElementById('loaderSlow').style.display = 'block';
         document.getElementById('direct').href = appUrl().replace('?embed=true','?').replace('&join-code','join-code');
@@ -382,6 +382,7 @@ footer b{color:#E879F9}
   function close(){
     if (!opened) return;
     opened = false;
+    clearTimeout(revealTimer);
     shell.classList.remove('open','wait');
     shell.setAttribute('aria-hidden','true');
     document.documentElement.style.overflow = '';
