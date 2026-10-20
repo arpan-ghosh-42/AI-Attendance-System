@@ -1,4 +1,5 @@
 import threading
+import time
 
 import streamlit as st
 from PIL import Image
@@ -15,6 +16,7 @@ def _preload_screens():
     # once per server process: import the heavy screens in the background
     # while the visitor is still on the home page, so the first click is instant
     def _load():
+        time.sleep(4)  # let the home page paint first on a small CPU
         import src.screens.teacher_screen  # noqa: F401
         import src.screens.student_screen  # noqa: F401
     threading.Thread(target=_load, daemon=True).start()
