@@ -1,7 +1,7 @@
-# SnapClass — AI Attendance System
+# Attendly — AI Attendance System
 
 <p align="center">
-  <img src="assets/images/logo.webp" alt="SnapClass logo" width="150" />
+  <img src="assets/images/logo.webp" alt="Attendly logo" width="150" />
 </p>
 
 <p align="center">
@@ -10,7 +10,7 @@
 
 ## What it does
 
-SnapClass supports two roles:
+Attendly supports two roles:
 
 - **Teachers** can create subjects, share enrollment links or QR codes, record attendance from uploaded/captured classroom photos or audio, review results before saving, and explore attendance records.
 - **Students** can register a profile with a face embedding and optional voice embedding, sign in with Face ID, join subjects with a code or shared link, and see attendance for each subject.
@@ -96,7 +96,7 @@ Then open the local URL printed by Streamlit, usually `http://localhost:8501`.
 2. Teachers create a subject and share its join code, link, or QR code.
 3. Students enroll in the subject.
 4. For a class session, the teacher either supplies classroom photos or records classroom audio.
-5. SnapClass matches the captured embeddings against enrolled student profiles, presents results for review, and saves confirmed attendance to Supabase.
+5. Attendly matches the captured embeddings against enrolled student profiles, presents results for review, and saves confirmed attendance to Supabase.
 
 Face matching uses a 128-dimensional dlib embedding with an SVM classifier and a distance threshold. Voice matching compares Resemblyzer embeddings using cosine similarity. These signals can be affected by recording conditions, image quality, and the number of enrolled profiles, so teachers should always review results before saving them.
 
@@ -118,7 +118,7 @@ Face matching uses a 128-dimensional dlib embedding with an SVM classifier and a
 
 ## Privacy and responsible use
 
-SnapClass processes biometric identifiers. Get explicit consent before enrolling anyone, restrict access to the Supabase project, apply least-privilege database policies, and provide a clear process for profile deletion. This project is intended to assist attendance-taking—not replace teacher judgment or institutional privacy requirements.
+Attendly processes biometric identifiers. Get explicit consent before enrolling anyone, restrict access to the Supabase project, apply least-privilege database policies, and provide a clear process for profile deletion. This project is intended to assist attendance-taking—not replace teacher judgment or institutional privacy requirements.
 
 ## Contributing
 
